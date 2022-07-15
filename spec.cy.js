@@ -10,6 +10,7 @@ const USER3 = { ID: 'zaxscd35', PW: '1234'};
 const USER4= { ID: 'zaxscd45', PW: '1234'};
 const URL = `http://111.naonsoft.kr/ekp`;
 const LOGIN_DELAY = 3000; // 페이지 랜더링 대기 시간
+const MODULE_DELAY = 3000; // 모듈 랜더링 대기 시간
 
 // ------------------------ 로그인 및 모듈정보 입력 --------------------
 const USER = USER1;
@@ -36,6 +37,16 @@ function visit(site, isServer) {
   return defaultSite
 }
 
+// ------------------------ Cypress Activate Logic --------------------
+function clientAct() {
+  selectRootFolder('MY')
+  //makeFolder();
+  var folderIds = ['84','85','88'];
+  selectFolderCheckBoxByNames(folderIds);
+  changeModuleViewSetting('listType_F','몰라')
+}
+
+// ------------------------ Cypress Activate Logic --------------------
 function login() {
   cy.get('#userId').type(USER.ID);
   cy.get('#password').type(USER.PW);
@@ -44,21 +55,32 @@ function login() {
   cy.wait(LOGIN_DELAY);
 }
 
+// ------------------------ Default_Module Function  --------------------
 function AccessModule() {
-  cy.contains(MODULE)
-      .click();
+  cy.contains(MODULE).click();
+  cy.wait(MODULE_DELAY);
 }
-
-function clientAct() {
-  cy.wait(3000);
-  selectRootFolder('MY')
-  cy.wait(3000);
-  //makeFolder();
-  var names = ['zaxscd15-새폴더-2022. 7. 15.-24829']
-  selectFolderCheckBoxByNames(names);
+function refreshModule() {
+  cy.contains(MODULE).first().click();
+  cy.wait(MODULE_DELAY);
+}
+function changeModuleViewSetting(listTypeDiv, snbWidth) { //fileBox가 Default
+  cy.get('.drop_view_optn').click();
+  if(listTypeDiv == 'listType_L') {
+    cy.get('#listType_L').click();
+  } else {
+    cy.get('#listType_F').click();
+  }
+  // 기본, 넓게, 더 넓게
+  if(snbWidth == '기본') {
+    cy.get('.ico_snb_sml').parent().click();
+  } else if(snbWidth == '넓게') {
+    cy.get('.ico_snb_med').parent().click();
+  } else {
+    cy.get('.ico_snb_lar').parent().click();
+  }
 
 }
-
 
 function selectRootFolder(fldType) {
   if(!fldType) fldType = 'MY';
@@ -94,8 +116,9 @@ function makeFolder() {
       .click();
 }
 
-function selectFolderCheckBoxByNames(names) {
-  names.forEach(element => cy.contains(element).click());
-  //'zaxscd15-새폴더-2022. 7. 15.-24829'
+function selectFolderCheckBoxByNames(folderIds) {
+  // 폴더 아이디 배열을 받아 클릭 활성화
+  // 밑의 folderChk는 클릭이 되지 않기 때문에 부모요소로 접근하여 클릭한다.
+  folderIds.forEach(element => cy.get('._folderChk[data-folder-id="' +element + '"]').first().parent().click());
 }
 

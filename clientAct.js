@@ -1,8 +1,11 @@
-export function act() {
 
-}
+// ----------------------------- 파일함 접근하기 ------------------------------
 
-export function selectRootFolder(fldType) {
+/**
+ * select fbx Dynatree's rootFolder
+ * @param fldType Dynatree's rootFolderType, MY= root_My, I=root_Joint, G=root_public, W=root_tws
+ */
+export function selectDynatreeRootFolder(fldType) {
     if(!fldType) fldType = 'MY';
     if(fldType === 'MY') {
 
@@ -15,6 +18,49 @@ export function selectRootFolder(fldType) {
     }
 }
 
+/**
+ * select fbx Dynatree's subFolder
+ * @param folderId Id that represent single folderId
+ */
+export function selectDynatreeSubFolder(folderId) {
+    cy.get('#dynatree-id-' + folderId).wait(500);
+}
+
+/**
+ * select fbx Dynatree's subFolder, by Click it's subFolder continuosly
+ * @param folderIds Id that represent Childs folderId
+ */
+export function selectDynatreeSubFolderChain(folderIds) {
+    folderIds.forEach(element => cy.get('#dynatree-id-' + folderId).click().wait(500));
+}
+
+
+// ----------------------------- 파일함 작업 ------------------------------
+// 올리기, 내려받기, 새폴더, 삭제, 이동, 복사, 공유, 이름변경, 메일발송
+
+/**
+ * activate CheckBox that have folderId's folderId
+ * @param folderIds folder Id that wants to Check
+ */
+function selectFolderCheckBoxByNames(folderIds) {
+    // 폴더 아이디 배열을 받아 클릭 활성화
+    // 밑의 folderChk는 클릭이 되지 않기 때문에 부모요소로 접근하여 클릭한다.
+    folderIds.forEach(element => cy.get('._folderChk[data-folder-id="' +element + '"]').first().parent().click());
+}
+
+function upload() {
+
+}
+
+function download() {
+
+}
+
+/**
+ * make new Folder in Current FileBox
+ * ** fileBox's name become union of user's ID + CurrentTime + Random 7 number
+ * ** and also write all i18n content as same value
+ */
 export function makeFolder() {
     let now = new Date();
     now = now.toLocaleDateString();
@@ -34,21 +80,79 @@ export function makeFolder() {
         .type(folderNameKor)
     cy.get('#fbxList_newFolderSave')
         .click();
+    cy.wait(500);
 }
 
-function selectFolderCheckBoxByNames(names) {
-    names.forEach(element => cy.contains(element).click());
-    //'zaxscd15-새폴더-2022. 7. 15.-24829'
+function deleteAll() {
+
 }
 
+function move() {
+
+}
+
+function copy() {
+
+}
+
+function changeName() {
+
+}
+
+function sendMailWithFile() {
+
+}
+
+function fopen() {
+
+}
+
+function fThumnail() {
+
+}
+
+/*
+* activate All CheckBox that Current Filebox have.
+* */
 function selectCurrentPagesAllCheckBox() {
-    cy.get('.frst .chkbox');
+    cy.get('.frst .chkbox').click();
 }
 
-function activateFileSearch() {
+
+// ----------------------------- 파일함 검색기능 ------------------------------
+
+function activateFileSearch(fileIds) {
 
 }
 
 function activateFolderSearch() {
 
 }
+
+function enterLogPage() {
+
+}
+// ----------------------------- 파일함 관리자 설정 ------------------------------
+
+function enterJointPage() {
+
+}
+
+function enterAdminPage() {
+
+}
+
+function enterBasicConfig() {
+
+}
+
+function enterOuterConfig() {
+
+}
+
+function enterLogConfig() {
+
+}
+
+
+// ----------------------------- 파일함 외부폴더 ------------------------------
