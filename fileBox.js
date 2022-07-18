@@ -1,4 +1,12 @@
 
+// ----------------------------- ------ 공통 --------------------------------
+
+function checkAutoConfirm(confirm) {
+    if(confirm) {
+        cy.get('#fbxMove_confirm').click();
+    }
+}
+
 // ----------------------------- 파일함 접근하기 ------------------------------
 
 /**
@@ -135,31 +143,43 @@ export function deleteAll() {
  * @param confirm default value is false. if true, click confirm button
  */
 export function move(folderId, confirm) {
-    var confirmMove = false;
+    var confirm = false;
     selectFncDropboxNMenu('move');
     cy.get('#fbxMove_folderTree #dynatree-id-' + folderId).click();
-    if(confirmMove == true) {
-        cy.get('#fbxMove_confirm').click();
-    }
+    checkAutoConfirm(confirm);
 }
 
-function copy() {
-
+/**
+ * copy file to certain folder
+ * @param folderId folderId that copy files to.
+ * @param confirm default value is false. if true, click confirm button
+ */
+function copy(folderId, confirm) {
+    selectFncDropboxNMenu('copy');
+    cy.get('#fbxMove_folderTree #dynatree-id-' + folderId).click();
+    checkAutoConfirm(confirm);
 }
 
-function changeName() {
-
+/**
+ * copy file to certain folder
+ * @param folderId folderId that copy files to.
+ * @param confirm default value is false. if true, click confirm button
+ */
+function changeName(folderId, confirm) {
+    selectFncDropboxNMenu('rename');
+    cy.get('#fbxMove_folderTree #dynatree-id-' + folderId).click();
+    checkAutoConfirm(confirm);
 }
 
 function sendMailWithFile() {
 
 }
 
-function fopen() {
+function fileOpenByAPI() {
 
 }
 
-function fThumnail() {
+function fileThumnail() {
 
 }
 
