@@ -19,14 +19,6 @@ export function selectDynatreeRootFolder(fldType) {
 }
 
 /**
- * select fbx Dynatree's subFolder
- * @param folderId Id that represent single folderId
- */
-export function selectDynatreeSubFolder(folderId) {
-    cy.get('#dynatree-id-' + folderId).wait(500);
-}
-
-/**
  * select fbx Dynatree's subFolder, by Click it's subFolder continuosly
  * @param folderIds Id that represent Childs folderId
  */
@@ -39,6 +31,13 @@ export function selectDynatreeSubFolderChain(folderIds) {
 // 올리기, 내려받기, 새폴더, 삭제, 이동, 복사, 공유, 이름변경, 메일발송
 
 /**
+ * select All file and Folders in current Filebox
+ */
+export function selectAllFileNFolder() {
+    cy.get('#fbxList_listEvent .chkbox').click();
+}
+
+/**
  * activate CheckBox that have folderId's folderId
  * @param folderIds folder Id that wants to Check
  */
@@ -46,6 +45,29 @@ export function selectFolderCheckBoxByNames(folderIds) {
     // 폴더 아이디 배열을 받아 클릭 활성화
     // 밑의 folderChk는 클릭이 되지 않기 때문에 부모요소로 접근하여 클릭한다.
     folderIds.forEach(element => cy.get('._folderChk[data-folder-id="' +element + '"]').first().parent().click());
+}
+
+export function selectFileCheckBoxByNames(fileNames) {
+    // 파일 이름 배열을 받아 클릭 활성화
+    // 밑의 fileChk는 클릭이 되지 않기 때문에 부모요소로 접근하여 클릭한다.
+    fileNames.forEach(element => cy.get('._fileChk[data-realfilename="' +element + '"]').first().parent().click());
+}
+
+export function selectFncDropboxNMenu(menu) {
+    switch(menu) {
+        case 'move' :
+            cy.get('._btn_move').click({force:true});
+            break;
+        case 'copy' :
+            cy.get('._btn_copy').click({force:true});
+            break;
+        case 'rename' :
+            cy.get('#fbxList_rename').click({force:true});
+            break;
+        case 'send' :
+            cy.get('#fbxList_mailSend').click({force:true});
+            break;
+    }
 }
 
 /**
@@ -60,14 +82,15 @@ export function upload() {
 * activate file download by click file Directly
 * */
 export function downloadByClick(fileNames) {
-    fileNames.forEach(element => cy.get('._file[data-realfilename="' +element + '"]').click());
+    fileNames.forEach(element => cy.get('._file[data-realfilename="' +element + '"]').click({force:true}));
 }
 
 /*
 * activate file download by Checkbox and Dropbox click
 * */
-function downloadByCheckBox(files) {
-    folderIds.forEach(element => cy.get('._folderChk[data-file-id="' +element + '"]').first().parent().click());
+export function downloadByCheckBox(fileNames) {
+    selectFileCheckBoxByNames(fileNames);
+    cy.get('._btn_download').click().wait(500);
 }
 
 /**
@@ -97,12 +120,27 @@ export function makeFolder() {
     cy.wait(500);
 }
 
-function deleteAll() {
-
+/**
+ * delete All File and Folders in current Filebox
+ * ( because confirm is Popup, complete auto delete is still imposiible, have to click popup comfirm button )
+ */
+export function deleteAll() {
+    selectAllFileNFolder();
+    cy.get('._btn_delete').click().wait(1000);
 }
 
-function move() {
-
+/**
+ * move file to certain folder
+ * @param folderId folderId that move files to.
+ * @param confirm default value is false. if true, click confirm button
+ */
+export function move(folderId, confirm) {
+    var confirmMove = false;
+    selectFncDropboxNMenu('move');
+    cy.get('#fbxMove_folderTree #dynatree-id-' + folderId).click();
+    if(confirmMove == true) {
+        cy.get('#fbxMove_confirm').click();
+    }
 }
 
 function copy() {

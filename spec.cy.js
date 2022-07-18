@@ -1,6 +1,12 @@
 // Javascript 로직 임포트
 import * as filebox from "./fileBox";
-import {downloadByClick, selectDynatreeRootFolder} from "./fileBox";
+import {
+  downloadByCheckBox,
+  downloadByClick,
+  selectAllFileNFolder,
+  selectDynatreeRootFolder,
+  selectFncDropboxNMenu
+} from "./fileBox";
 
 // ------------------------ 기본 테스트로직 --------------------------
 
@@ -42,14 +48,18 @@ function visit(site, isServer) {
 
 // ------------------------ Cypress Activate Logic --------------------
 function clientAct() {
-  filebox.selectDynatreeRootFolder('G');
+  //filebox.selectDynatreeRootFolder('G');
   //filebox.makeFolder();
   var folderIds = ['84','89'];
   filebox.selectDynatreeSubFolderChain(folderIds);
-  changeModuleViewSetting('listType_F','몰라')
-  filebox.upload();
-  var fileIds = ['1MB.txt'];
-  filebox.downloadByClick(fileIds);
+  //changeModuleViewSetting('listType_F','몰라')
+  //filebox.upload();
+  var fileNames = ['1MB.txt', '3MB.txt'];
+  //filebox.downloadByCheckBox(fileNames);
+  filebox.selectAllFileNFolder();
+  //filebox.deleteAll(true);
+  //filebox.selectFncDropboxNMenu('move');
+  filebox.move('root_my');
 }
 
 // ------------------------ Cypress Activate Logic --------------------
