@@ -31,7 +31,7 @@ export function selectDynatreeSubFolder(folderId) {
  * @param folderIds Id that represent Childs folderId
  */
 export function selectDynatreeSubFolderChain(folderIds) {
-    folderIds.forEach(element => cy.get('#dynatree-id-' + folderId).click().wait(500));
+    folderIds.forEach(element => cy.get('#dynatree-id-' + element).click().wait(500));
 }
 
 
@@ -42,18 +42,32 @@ export function selectDynatreeSubFolderChain(folderIds) {
  * activate CheckBox that have folderId's folderId
  * @param folderIds folder Id that wants to Check
  */
-function selectFolderCheckBoxByNames(folderIds) {
+export function selectFolderCheckBoxByNames(folderIds) {
     // 폴더 아이디 배열을 받아 클릭 활성화
     // 밑의 folderChk는 클릭이 되지 않기 때문에 부모요소로 접근하여 클릭한다.
     folderIds.forEach(element => cy.get('._folderChk[data-folder-id="' +element + '"]').first().parent().click());
 }
 
-function upload() {
-
+/**
+ * actviate upload Dialog ( Common Dialog )
+ */
+export function upload() {
+    cy.get('._btn_upload').click().wait(500);
+    cy.get('.fileinput-button').click().wait(500);
 }
 
-function download() {
+/*
+* activate file download by click file Directly
+* */
+export function downloadByClick(fileNames) {
+    fileNames.forEach(element => cy.get('._file[data-realfilename="' +element + '"]').click());
+}
 
+/*
+* activate file download by Checkbox and Dropbox click
+* */
+function downloadByCheckBox(files) {
+    folderIds.forEach(element => cy.get('._folderChk[data-file-id="' +element + '"]').first().parent().click());
 }
 
 /**
