@@ -1,4 +1,7 @@
 // Javascript 로직 임포트
+import * as filebox from "./fileBox";
+import {downloadByClick, selectDynatreeRootFolder} from "./fileBox";
+
 // ------------------------ 기본 테스트로직 --------------------------
 
 // ------------------------  계정 정보  -----------------------------
@@ -39,11 +42,14 @@ function visit(site, isServer) {
 
 // ------------------------ Cypress Activate Logic --------------------
 function clientAct() {
-  selectRootFolder('MY')
-  //makeFolder();
-  var folderIds = ['84','85','88'];
-  selectFolderCheckBoxByNames(folderIds);
+  filebox.selectDynatreeRootFolder('G');
+  //filebox.makeFolder();
+  var folderIds = ['84','89'];
+  filebox.selectDynatreeSubFolderChain(folderIds);
   changeModuleViewSetting('listType_F','몰라')
+  filebox.upload();
+  var fileIds = ['1MB.txt'];
+  filebox.downloadByClick(fileIds);
 }
 
 // ------------------------ Cypress Activate Logic --------------------
@@ -79,46 +85,4 @@ function changeModuleViewSetting(listTypeDiv, snbWidth) { //fileBox가 Default
   } else {
     cy.get('.ico_snb_lar').parent().click();
   }
-
 }
-
-function selectRootFolder(fldType) {
-  if(!fldType) fldType = 'MY';
-  if(fldType === 'MY') {
-
-  } else if(fldType === 'I') {
-    cy.get('#dynatree-id-root_joint').click();
-  } else if(fldType === 'G') {
-    cy.get('#dynatree-id-root_public').click();
-  } else if(fldType === 'W') {
-    cy.get('#dynatree-id-root_tws').click();
-  }
-}
-
-function makeFolder() {
-  let now = new Date();
-  now = now.toLocaleDateString();
-  let randomValue = Math.round(Math.random() * 1000000);
-  let folderNameKor = `${USER.ID}-새폴더-${now}-${randomValue}`
-  cy.get('._btn_newfolder')
-      .click();
-  cy.get('#fbxList_newFolder_ko')
-      .type(folderNameKor)
-  cy.get('#fbxList_newFolder_en')
-      .type(folderNameKor)
-  cy.get('#fbxList_newFolder_zh')
-      .type(folderNameKor)
-  cy.get('#fbxList_newFolder_ja')
-      .type(folderNameKor)
-  cy.get('#fbxList_newFolder_vi')
-      .type(folderNameKor)
-  cy.get('#fbxList_newFolderSave')
-      .click();
-}
-
-function selectFolderCheckBoxByNames(folderIds) {
-  // 폴더 아이디 배열을 받아 클릭 활성화
-  // 밑의 folderChk는 클릭이 되지 않기 때문에 부모요소로 접근하여 클릭한다.
-  folderIds.forEach(element => cy.get('._folderChk[data-folder-id="' +element + '"]').first().parent().click());
-}
-
