@@ -1,7 +1,7 @@
 
 // ----------------------------- ------ 공통 --------------------------------
 
-function checkAutoConfirm(confirm) {
+export function checkAutoConfirm(confirm) {
     if(confirm) {
         cy.get('#fbxMove_confirm').click();
     }
@@ -13,7 +13,7 @@ function checkAutoConfirm(confirm) {
  * select fbx Dynatree's rootFolder
  * @param fldType Dynatree's rootFolderType, MY= root_My, I=root_Joint, G=root_public, W=root_tws
  */
-export function selectDynatreeRootFolder(fldType) {
+ export function selectDynatreeRootFolder(fldType) {
     if(!fldType) fldType = 'MY';
     if(fldType === 'MY') {
 
@@ -30,7 +30,7 @@ export function selectDynatreeRootFolder(fldType) {
  * select fbx Dynatree's subFolder, by Click it's subFolder continuosly
  * @param folderIds Id that represent Childs folderId
  */
-export function selectDynatreeSubFolderChain(folderIds) {
+ export function selectDynatreeSubFolderChain(folderIds) {
     folderIds.forEach(element => cy.get('#dynatree-id-' + element).click().wait(500));
 }
 
@@ -41,7 +41,7 @@ export function selectDynatreeSubFolderChain(folderIds) {
 /**
  * select All file and Folders in current Filebox
  */
-export function selectAllFileNFolder() {
+ export function selectAllFileNFolder() {
     cy.get('#fbxList_listEvent .chkbox').click();
 }
 
@@ -49,19 +49,19 @@ export function selectAllFileNFolder() {
  * activate CheckBox that have folderId's folderId
  * @param folderIds folder Id that wants to Check
  */
-export function selectFolderCheckBoxByNames(folderIds) {
+ export function selectFolderCheckBoxByIds(folderIds) {
     // 폴더 아이디 배열을 받아 클릭 활성화
     // 밑의 folderChk는 클릭이 되지 않기 때문에 부모요소로 접근하여 클릭한다.
     folderIds.forEach(element => cy.get('._folderChk[data-folder-id="' +element + '"]').first().parent().click());
 }
 
-export function selectFileCheckBoxByNames(fileNames) {
+ export function selectFileCheckBoxByNames(fileNames) {
     // 파일 이름 배열을 받아 클릭 활성화
     // 밑의 fileChk는 클릭이 되지 않기 때문에 부모요소로 접근하여 클릭한다.
     fileNames.forEach(element => cy.get('._fileChk[data-realfilename="' +element + '"]').first().parent().click());
 }
 
-export function selectFncDropboxNMenu(menu) {
+ export function selectFncDropboxNMenu(menu) {
     switch(menu) {
         case 'move' :
             cy.get('._btn_move').click({force:true});
@@ -81,7 +81,7 @@ export function selectFncDropboxNMenu(menu) {
 /**
  * actviate upload Dialog ( Common Dialog )
  */
-export function upload() {
+ export function upload() {
     cy.get('._btn_upload').click().wait(500);
     cy.get('.fileinput-button').click().wait(500);
 }
@@ -89,14 +89,14 @@ export function upload() {
 /*
 * activate file download by click file Directly
 * */
-export function downloadByClick(fileNames) {
+ export function downloadByClick(fileNames) {
     fileNames.forEach(element => cy.get('._file[data-realfilename="' +element + '"]').click({force:true}));
 }
 
 /*
 * activate file download by Checkbox and Dropbox click
 * */
-export function downloadByCheckBox(fileNames) {
+ export function downloadByCheckBox(fileNames) {
     selectFileCheckBoxByNames(fileNames);
     cy.get('._btn_download').click().wait(500);
 }
@@ -106,11 +106,11 @@ export function downloadByCheckBox(fileNames) {
  * ** fileBox's name become union of user's ID + CurrentTime + Random 7 number
  * ** and also write all i18n content as same value
  */
-export function makeFolder() {
+ export function makeFolder(user) {
     let now = new Date();
     now = now.toLocaleDateString();
     let randomValue = Math.round(Math.random() * 1000000);
-    let folderNameKor = `${USER.ID}-새폴더-${now}-${randomValue}`
+    let folderNameKor = `${user.ID}-새폴더-${now}-${randomValue}`
     cy.get('._btn_newfolder')
         .click();
     cy.get('#fbxList_newFolder_ko')
@@ -132,7 +132,7 @@ export function makeFolder() {
  * delete All File and Folders in current Filebox
  * ( because confirm is Popup, complete auto delete is still imposiible, have to click popup comfirm button )
  */
-export function deleteAll() {
+ export function deleteAll() {
     selectAllFileNFolder();
     cy.get('._btn_delete').click().wait(1000);
 }
@@ -142,7 +142,7 @@ export function deleteAll() {
  * @param folderId folderId that move files to.
  * @param confirm default value is false. if true, click confirm button
  */
-export function move(folderId, confirm) {
+ export function move(folderId, confirm) {
     var confirm = false;
     selectFncDropboxNMenu('move');
     cy.get('#fbxMove_folderTree #dynatree-id-' + folderId).click();
@@ -154,7 +154,7 @@ export function move(folderId, confirm) {
  * @param folderId folderId that copy files to.
  * @param confirm default value is false. if true, click confirm button
  */
-function copy(folderId, confirm) {
+export function copy(folderId, confirm) {
     selectFncDropboxNMenu('copy');
     cy.get('#fbxMove_folderTree #dynatree-id-' + folderId).click();
     checkAutoConfirm(confirm);
@@ -165,64 +165,65 @@ function copy(folderId, confirm) {
  * @param folderId folderId that copy files to.
  * @param confirm default value is false. if true, click confirm button
  */
-function changeName(folderId, confirm) {
+export function changeName(folderId, confirm) {
+    selectFolderCheckBoxByIds([folderId]);
     selectFncDropboxNMenu('rename');
-    cy.get('#fbxMove_folderTree #dynatree-id-' + folderId).click();
-    checkAutoConfirm(confirm);
+    /*cy.get('#fbxMove_folderTree #dynatree-id-' + folderId).click();
+    checkAutoConfirm(confirm);*/
 }
 
-function sendMailWithFile() {
-
-}
-
-function fileOpenByAPI() {
+export function sendMailWithFile() {
 
 }
 
-function fileThumnail() {
+export function fileOpenByAPI() {
+
+}
+
+export function fileThumnail() {
 
 }
 
 /*
 * activate All CheckBox that Current Filebox have.
 * */
-function selectCurrentPagesAllCheckBox() {
+export function selectCurrentPagesAllCheckBox() {
     cy.get('.frst .chkbox').click();
 }
 
 
 // ----------------------------- 파일함 검색기능 ------------------------------
 
-function activateFileSearch(fileIds) {
+export function activateFileSearch(fileIds) {
 
 }
 
-function activateFolderSearch() {
+export function activateFolderSearch() {
 
 }
 
-function enterLogPage() {
+export function enterLogPage() {
 
 }
 // ----------------------------- 파일함 관리자 설정 ------------------------------
 
-function enterJointPage() {
+export function enterJointPage() {
 
 }
 
-function enterAdminPage() {
+export function enterAdminPage() {
 
 }
 
-function enterBasicConfig() {
+export function enterBasicConfig() {
 
 }
 
-function enterOuterConfig() {
+export function enterOuterConfig() {
 
 }
 
-function enterLogConfig() {
+export function enterLogConfig() {
 
 }
 
