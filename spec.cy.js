@@ -7,7 +7,7 @@
 import * as filebox from "./fileBox";
 import * as organization from "./organization";
 import * as mail from "./mail";
-import {executeMailSend, writePromiseMail} from "./mail";
+import {executeMailSend, executePromsFunction, readMail, writePromiseMail} from "./mail";
 
 // ------------------------ 기본 테스트로직 --------------------------
 
@@ -26,7 +26,9 @@ const MODULE_DELAY = 3000; // 모듈 랜더링 대기 시간
 const USER = ADMIN;
 const MODULE = '전자우편'
 const ETC_MODULE_SELECTOR = '.gnb_menu .mn_admin a'
-const SITE = {name : 'o7', isServer : false };
+const SITE = {name : 'oq7', isServer : false };
+const ADMIN_PAGE = true;
+const ORG_PAGE = visit(SITE.name, true) + "/iam/view/organization/org/orgMgtMain?display=IF"
 
 // ------------------------ 테스트 일감 정보 입력 ----------------------
 const TASK_NUMBER = '#69946 전자우편>약속메일 > 승인(수락/거절) 필터 예외처리';
@@ -37,11 +39,16 @@ const TASK_NUMBER = '#69946 전자우편>약속메일 > 승인(수락/거절) �
 describe(`${TASK_NUMBER}_TEST`, () => {
   it('LOGIN_ACCESS_MODULE', () => {
     cy.visit(visit(SITE.name, SITE.isServer))
-    login() //- SSO로 로그인 절차 생략가능
-    AccessModule(false);
-    clientAct();
+    if(ADMIN_PAGE) {
+        cy.wait(4000);
+        cy.visit(ORG_PAGE);
+        adminAct();
+    } else {
+      //login() //- SSO로 로그인 절차 생략가능
+      AccessModule(false);
+      clientAct();
+    }
   })
-
 })
 
 
@@ -53,15 +60,6 @@ function visit(site, isServer) {
   }
   defaultSite = defaultSite.replace('111', site);
   return defaultSite
-}
-
-// ------------------------ Cypress Activate Logic --------------------
-function clientAct() {
-  cy.wait(300)
-  //mail.setTestConfig();
-  mail.writeSimpleMail(TASK_NUMBER);
-  mail.writePromiseMail();
-  mail.executeMailSend();
 }
 
 // ------------------------ Cypress Activate Logic --------------------
@@ -81,7 +79,10 @@ function AccessModule(etcMenu) {
       force : true
     });
   } else {
-    cy.contains(MODULE).click();
+    cy.contains(MODULE).click({
+      multiple : true,
+      force : true
+    });
   }
   cy.wait(MODULE_DELAY);
 }
@@ -104,4 +105,32 @@ function changeModuleViewSetting(listTypeDiv, snbWidth) { //fileBox가 Default
   } else {
     cy.get('.ico_snb_lar').parent().click();
   }
+}
+
+// ------------------------ Cypress Activate Logic --------------------
+function clientAct() {
+  mail.readMail("약속메일 전송테스트");
+  mail.executePromsFunction();
+}
+
+// Cypress AdminPage Activate Logic
+function adminAct() {
+
+  let idList = ['zaxscd95', 'zaxscd15', 'zaxscd25'];
+  let empNameList = ['이유송', '일부장', '이부장'];
+  let password = "fnfn90";
+
+  cy.contains('434').click();
+
+  for (let i = 0; i < idList.length; i++) {
+    cy.get("#orgUserMngList_btnAdd").click();
+    cy.get("#orgEmpRegForm_UserId").type(idList[i])
+    cy.get("#orgEmpRegForm_LoginPwd").type(password)
+    cy.get("#orgEmpRegForm_LoginPwdValid").type(password)
+    cy.get("#orgEmpRegForm_empName_ko").type(empNameList[i])
+    cy.get("#orgEmpRegForm_licKind .lst_top .chkbox").click();
+    cy.get("#orgEmpRegForm_addUser").click();
+    cy.wait(4000);
+  }
+
 }

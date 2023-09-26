@@ -64,3 +64,24 @@ export function writePromiseMail() {
     cy.get("#emlMailReg_promsPlace").type("약속메일 장소");
     cy.get("#emlMailReg_promsContent").type("약속메일 내용");
 }
+
+/**
+ * 메일 조회
+ */
+export function readMail(mailSubject) {
+    cy.get('#list_listStyleDiv .sub a').each(($element) => {
+        if($element[0].innerText.indexOf(mailSubject) > -1) {
+            cy.wrap($element).click();
+            return false;
+        }
+    });
+}
+
+/**
+ * 약속 수락 거절 미정
+ */
+export function executePromsFunction() {
+    cy.get('.accept_optn button').each(($element) => {
+        $element.click();
+    });
+}
